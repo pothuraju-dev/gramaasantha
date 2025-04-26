@@ -1,88 +1,103 @@
 import { supabase } from '@/lib/supabaseClient'
-import type { CreateNewTask } from '@/types/CreateNewForm'
 import type { QueryData } from '@supabase/supabase-js'
 
-export const tasksWithProjectsQuery = supabase.from('tasks').select(`
+/** ===========================
+ * Categories Queries
+ * ============================ **/
+
+export const categoriesQuery = supabase.from('categories').select(`
+  id,
+  name_en,
+  name_te,
+  slug,
+  image_url,
+  is_active,
+  created_at,
+  updated_at
+`)
+export type Categories = QueryData<typeof categoriesQuery>
+
+/** ===========================
+ * Products Queries
+ * ============================ **/
+
+export const productsQuery = supabase.from('products').select(`
+  *,
+  categories (
+    id,
+    name_en,
+    name_te,
+    slug
+  )
+`)
+export type ProductsWithCategory = QueryData<typeof productsQuery>
+
+export const productQuery = (id: string) =>
+  supabase.from('products').select(`
     *,
-    projects (
+    categories (
       id,
-      name,
-      slug
+      name_en,
+      name_te
     )
-  `)
-export type TasksWithProjects = QueryData<typeof tasksWithProjectsQuery>
+  `).eq('id', id).single()
+export type Product = QueryData<ReturnType<typeof productQuery>>
 
-export const projectsQuery = supabase.from('projects').select()
-export type Projects = QueryData<typeof projectsQuery>
+export const updateProductQuery = (updatedProduct = {}, id: string) => {
+  return supabase.from('products').update(updatedProduct).eq('id', id)
+}
 
-export const projectQuery = (slug: string) =>
-  supabase
-    .from('projects')
-    .select(
-      `
-   *,
-   tasks (
+export const deleteProductQuery = (id: string) => {
+  return supabase.from('products').delete().eq('id', id)
+}
+
+/** ===========================
+ * Orders Queries
+ * ============================ **/
+
+export const ordersQuery = supabase.from('orders').select(`
+  id,
+  user_id,
+  order_status,
+  total_amount,
+  delivery_address,
+  phone_number,
+  placed_at
+`)
+export type Orders = QueryData<typeof ordersQuery>
+
+export const orderQuery = (id: string) =>
+  supabase.from('orders').select(`
+    *,
+    order_items (
+      id,
+      product_id,
+      quantity_kg,
+      price_per_kg,
+      total_price
+    )
+  `).eq('id', id).single()
+export type OrderWithItems = QueryData<ReturnType<typeof orderQuery>>
+
+export const updateOrderQuery = (updatedOrder = {}, id: string) => {
+  return supabase.from('orders').update(updatedOrder).eq('id', id)
+}
+
+/** ===========================
+ * Order Items Queries
+ * ============================ **/
+
+export const orderItemsQuery = supabase.from('order_items').select(`
+  *,
+  products (
     id,
     name,
-    status,
-    due_date
-   )
-  `
-    )
-    .eq('slug', slug)
-    .single()
+    price_per_kg,
+    image_url
+  )
+`)
+export type OrderItemsWithProduct = QueryData<typeof orderItemsQuery>
 
-export type Project = QueryData<ReturnType<typeof projectQuery>>
-
-export const updateProjectQuery = (updatedProject = {}, id: number) => {
-  return supabase.from('projects').update(updatedProject).eq('id', id)
-}
-
-export const taskQuery = (id: string) => {
-  return supabase
-    .from('tasks')
-    .select(
-      `
-      *,
-      projects (
-        id,
-        name,
-        slug
-      )
-    `
-    )
-    .eq('id', id)
-    .single()
-}
-export type Task = QueryData<ReturnType<typeof taskQuery>>
-
-export const updateTaskQuery = (updatedTask = {}, id: number) => {
-  return supabase.from('tasks').update(updatedTask).eq('id', id)
-}
-
-export const deleteTaskQuery = (id: number) => {
-  return supabase.from('tasks').delete().eq('id', id)
-}
-
-export const profileQuery = ({
-  column,
-  value
-}: {
-  column: string
-  value: string
-}) => {
-  return supabase.from('profiles').select().eq(column, value).single()
-}
-
-export const profilesQuery = supabase.from('profiles').select(`id, full_name`)
-
-export const groupedProfilesQuery = (userIds: string[]) =>
-  supabase
-    .from('profiles')
-    .select('username, avatar_url, id, full_name')
-    .in('id', userIds)
-export type Collabs = QueryData<ReturnType<typeof groupedProfilesQuery>>
-
-export const createNewTaskQuery = (newTask: CreateNewTask) => {
-  return supabase.from('tasks').insert(newTask)
+export const deleteOrderItemQuery = (id: string) => {
+  return supabase.from('order_items').delete().eq('id', id)
 }

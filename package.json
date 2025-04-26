@@ -13,15 +13,15 @@
     "format": "prettier --write src/",
     "supabase:init": "supabase init",
     "supabase:login": "supabase login",
-    "supabase:link": "supabase link --project-ref sodlbtaqnxcbddmhnapu",
-    "supabase:types": "npx supabase gen types --lang=typescript --project-id sodlbtaqnxcbddmhnapu --schema public > database/types.ts",
+    "supabase:link": "supabase link --project-ref obhnkiybuzptdywfyucu",
+    "supabase:types": "npx supabase gen types --lang=typescript --project-id obhnkiybuzptdywfyucu --schema public > database/types.ts",
     "db:migrate:new": "supabase migration new",
     "db:reset": "supabase db reset --linked",
     "db:seed": "node --env-file=.env database/seed.js"
   },
   "dependencies": {
     "@formkit/vue": "^1.6.9",
-    "@supabase/supabase-js": "^2.47.10",
+    "@supabase/supabase-js": "^2.49.4",
     "@tanstack/vue-table": "^8.19.3",
     "@vueuse/core": "^10.11.1",
     "class-variance-authority": "^0.7.0",
