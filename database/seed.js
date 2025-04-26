@@ -5,12 +5,6 @@ import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SERVICE_ROLE_KEY)
 
-const testingUserEmail = process.env.TESTING_USER_EMAIL
-if (!testingUserEmail) {
-  console.error('Have you forgot to add TESTING_USER_EMAIL to your .env file?')
-  process.exit()
-}
-
 const logErrorAndExit = (tableName, error) => {
   console.error(
     `An error occurred in table '${tableName}' with code ${error.code}: ${error.message}`
@@ -22,127 +16,141 @@ const logStep = (stepMessage) => {
   console.log(stepMessage)
 }
 
-const PrimaryTestUserExists = async () => {
-  logStep('Checking if primary test user exists...')
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, username')
-    .eq('username', 'testaccount1')
-    .single()
+// 1. Seed Categories
+const seedCategories = async () => {
+  logStep('Seeding categories...')
 
-  if (error) {
-    console.log('Primary test user not found. Will create one.')
-    return false
-  }
-
-  logStep('Primary test user is found.')
-  return data?.id
-}
-
-const createPrimaryTestUser = async () => {
-  logStep('Creating primary test user...')
-  const firstName = 'Test'
-  const lastName = 'Account'
-  const userName = 'testaccount1'
-  const email = testingUserEmail
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: 'password',
-    options: {
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        full_name: firstName + ' ' + lastName,
-        username: userName
-      }
+  const categories = [
+    {
+      name_en: 'Vegetables',
+      name_te: 'కూరగాయలు',
+      slug: 'vegetables',
+      image_url: null,
+    },
+    {
+      name_en: 'Fruits',
+      name_te: 'పండ్లు',
+      slug: 'fruits',
+      image_url: null,
+    },
+    {
+      name_en: 'Groceries',
+      name_te: 'కిరాణా',
+      slug: 'groceries',
+      image_url: null,
+    },
+    {
+      name_en: 'Meat',
+      name_te: 'మాంసం',
+      slug: 'meat',
+      image_url: null,
     }
-  })
+  ]
 
-  if (error) {
-    logErrorAndExit('Users', error)
-  }
+  const { data, error } = await supabase.from('categories').insert(categories).select('id')
 
-  if (data) {
-    const userId = data.user.id
-    await supabase.from('profiles').insert({
-      id: userId,
-      full_name: firstName + ' ' + lastName,
-      username: userName,
-      bio: 'The main testing account',
-      avatar_url: `https://i.pravatar.cc/150?u=${data.user.id}`
-    })
+  if (error) return logErrorAndExit('Categories', error)
 
-    logStep('Primary test user created successfully.')
-    return userId
-  }
+  logStep('Categories seeded successfully.')
+
+  return data.map(category => category.id) // Return array of category IDs
 }
 
-const seedProjects = async (numEntries, userId) => {
-  logStep('Seeding projects...')
-  const projects = []
+// 2. Seed Products
+const seedProducts = async (categoryIds, numProducts = 20) => {
+  logStep('Seeding products...')
 
-  for (let i = 0; i < numEntries; i++) {
-    const name = faker.lorem.words(3)
+  const products = []
 
-    projects.push({
+  for (let i = 0; i < numProducts; i++) {
+    const name = faker.commerce.productName()
+    const price = faker.number.float({ min: 10, max: 200, precision: 0.5 })
+    const stock = faker.number.float({ min: 10, max: 100, precision: 0.5 })
+    const category_id = faker.helpers.arrayElement(categoryIds)
+
+    products.push({
       name: name,
-      slug: name.toLocaleLowerCase().replace(/ /g, '-'),
-      description: faker.lorem.paragraphs(2),
-      status: faker.helpers.arrayElement(['in-progress', 'completed']),
-      collaborators: faker.helpers.arrayElements([userId])
+      description: faker.commerce.productDescription(),
+      price_per_kg: price,
+      stock: stock,
+      category_id: category_id,
+      image_url: null
     })
   }
 
-  const { data, error } = await supabase.from('projects').insert(projects).select('id')
+  const { data, error } = await supabase.from('products').insert(products).select('id')
 
-  if (error) return logErrorAndExit('Projects', error)
+  if (error) return logErrorAndExit('Products', error)
 
-  logStep('Projects seeded successfully.')
+  logStep('Products seeded successfully.')
 
-  return data
+  return data.map(product => product.id) // Return array of product IDs
 }
 
-const seedTasks = async (numEntries, projectsIds, userId) => {
-  logStep('Seeding tasks...')
-  const tasks = []
+// 3. Seed Orders
+const seedOrders = async (numOrders = 10) => {
+  logStep('Seeding orders...')
 
-  for (let i = 0; i < numEntries; i++) {
-    tasks.push({
-      name: faker.lorem.words(3),
-      status: faker.helpers.arrayElement(['in-progress', 'completed']),
-      description: faker.lorem.paragraph(),
-      due_date: faker.date.future(),
-      profile_id: userId,
-      project_id: faker.helpers.arrayElement(projectsIds),
-      collaborators: faker.helpers.arrayElements([userId])
+  const orders = []
+
+  for (let i = 0; i < numOrders; i++) {
+    orders.push({
+      user_id: null, // (You can link a user ID later if needed)
+      order_status: faker.helpers.arrayElement(['pending', 'confirmed', 'delivered']),
+      total_amount: faker.number.float({ min: 100, max: 1000, precision: 0.01 }),
+      delivery_address: faker.location.streetAddress(),
+      phone_number: faker.phone.number('9#########'), // Indian mobile style
+      placed_at: faker.date.recent()
     })
   }
 
-  const { data, error } = await supabase.from('tasks').insert(tasks).select('id')
+  const { data, error } = await supabase.from('orders').insert(orders).select('id')
 
-  if (error) return logErrorAndExit('Tasks', error)
+  if (error) return logErrorAndExit('Orders', error)
 
-  logStep('Tasks seeded successfully.')
+  logStep('Orders seeded successfully.')
 
-  return data
+  return data.map(order => order.id) // Return array of order IDs
 }
 
-const seedDatabase = async (numEntriesPerTable) => {
-  let userId
+// 4. Seed Order Items
+const seedOrderItems = async (orderIds, productIds) => {
+  logStep('Seeding order items...')
 
-  const testUserId = await PrimaryTestUserExists()
+  const orderItems = []
 
-  if (!testUserId) {
-    const primaryTestUserId = await createPrimaryTestUser()
-    userId = primaryTestUserId
-  } else {
-    userId = testUserId
+  for (let i = 0; i < orderIds.length; i++) {
+    const numberOfItems = faker.number.int({ min: 1, max: 5 })
+
+    for (let j = 0; j < numberOfItems; j++) {
+      const product_id = faker.helpers.arrayElement(productIds)
+      const quantity_kg = faker.number.float({ min: 0.5, max: 5, precision: 0.5 })
+      const price_per_kg = faker.number.float({ min: 10, max: 200, precision: 0.5 })
+      const total_price = (price_per_kg * quantity_kg).toFixed(2)
+
+      orderItems.push({
+        order_id: orderIds[i],
+        product_id: product_id,
+        quantity_kg: quantity_kg,
+        price_per_kg: price_per_kg,
+        total_price: total_price
+      })
+    }
   }
 
-  const projectsIds = (await seedProjects(numEntriesPerTable, userId)).map((project) => project.id)
-  await seedTasks(numEntriesPerTable, projectsIds, userId)
+  const { error } = await supabase.from('order_items').insert(orderItems)
+
+  if (error) return logErrorAndExit('Order Items', error)
+
+  logStep('Order items seeded successfully.')
 }
 
-const numEntriesPerTable = 10
+// Full Seeder
+const seedDatabase = async () => {
+  const categoryIds = await seedCategories()
+  const productIds = await seedProducts(categoryIds)
+  const orderIds = await seedOrders()
+  await seedOrderItems(orderIds, productIds)
+}
 
-seedDatabase(numEntriesPerTable)
+seedDatabase()
