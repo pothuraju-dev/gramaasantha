@@ -1,62 +1,140 @@
-# vuejs-masterclass-2024-Edition
+# 🌱 GramaaSantha - Village Market Digitized
 
-This respository contains the source code for the Vue.js [Master Class 2024 Edition course](https://vueschool.io/courses/the-vuejs-3-master-class).
+Welcome to **GramaaSantha**, a hyperlocal digital marketplace for fresh vegetables, fruits, groceries, and meat. 
+Our mission is to empower rural commerce while promoting eco-friendly deliveries using bicycles and electric vehicles (EVs).
 
-## About The Masterclass
+---
 
-The Vue.js Master Class is our signature course and THE most popular source online for learning how to build a real world Vue.js application from scratch. This 2024 Edition of the course is a complete re-write with the latest and great official and community Vue.js technologies.
+# 🌐 Project Overview
 
-The Vue.js Masterclass 2024 Edition is so comprehensive that we can not cover everything on this page. Thus we’ve created a separate page where you can learn more about it.
+**GramaaSantha** brings the spirit of the traditional **Grama Santha (Village Market)** to an easy-to-use online platform. 
 
-During this video course, we focus on learning practical application and strategies for Vue.js by building a feature-rich product management app together. The goal of this course is to teach you Vue.js along with Best Practices, Modern Javascript, and other exciting technologies, by building a Real World application.
+Customers can browse categories, select items by weight (e.g., 500g, 1kg, 1 dozen), and get deliveries directly from trusted local vendors, all while minimizing carbon footprint.
 
-**We cover the fundamentals, like:**
+---
 
-- Setting up Vue 3 project using Vite
-- Integrating VueDevTools with Vue js 3
-- Routing with Vue Router and File Based Routing with unplugin-vue-router
-- Vue Component and Composable Design with the Composition API
-- State management with Pinia
-- Modern Javascript (ES2023/ESNext)
-- User permissions & Route Guards
-- Data and File Storage, plus Authentication with Supabase
-- Automatic code review with ESLint and Formatting with Prettier
-- Consuming REST APIs
-- Application architecture and best practices
-- Error handling and monitoring
-- Supabase Row Level Security
-- Database migrations and seeding
+# 📊 Tech Stack
 
-**We also dive into practical real world features and how to implement them quickly:**
+| Area | Tech |
+|:--|:--|
+| Frontend | Vue 3 + Vite |
+| Styling | TailwindCSS |
+| State Management | Pinia (optional) |
+| Backend & Database | Supabase (Auth, DB, Storage) |
+| Hosting & Deployment | Vercel |
+| Version Control | GitHub |
 
-- Robust and beautiful components with TailwindCSS and ShadCN Vue
-- SEO, Sitemaps, schema.org and Metadata
-- Transactional emails for dynamic app notifications
-- Data filtering and searching strategies across multiple resources (projects, tasks, etc)
-- Forms and Validation with Formkit
-- Auto saving on edits to inline content
-- Pagination and Infinite scroll support
-- Real time commenting
-- Analytics and events tracking with Google Analytics 4, Google Tag Manager, and Sentry.
+---
 
-By completing the Vue.js Masterclass, you will be able to land any Vue.js related job or optimize/improve your own projects!
+# 📅 Project Timeline
 
-Requirements You should be familiar with JavaScript, HTML, basic CSS, and have fundamental knowledge of Vue.js (specifically with the Composition API).
+- **Start Date**: May 1st, 2025
+- **MVP Launch Target**: May 31st, 2025
 
-If you are just starting out with Vue.js, we suggest that you watch our free course [Vue.js Fundamentals with the Composition API](https://vueschool.io/courses/vue-js-fundamentals-with-the-composition-api) along with [the Vue Component Fundamentals with the Composition API](https://vueschool.io/courses/vue-component-fundamentals-with-the-composition-api) course. These courses will help you learn Vue.js fundamentals and prepare for the journey ahead.
+---
 
-## Project Setup
+# ✍️ Features
 
-```sh
+## User Side
+- 🛋✨ Shop by Category (Vegetables, Fruits, Groceries, Meat)
+- 🍎 Order Products by Weight (500g, 1kg, etc.)
+- 🚗 Eco-Friendly Delivery
+- 👥 User Authentication (Mobile OTP Login)
+- 🛂 View Cart, Checkout, Order Tracking
+- 🌍 Bilingual Interface (English ⌨️ Telugu)
+
+## Admin Panel
+- 📊 View and Manage Orders
+- 📂 Manage Product Listings
+- 🔐 Protected Admin Access
+- 🔄 CRUD Operations for Products and Categories
+
+---
+
+# 🛠️ Development Phases
+
+## Phase 1: Project Setup & Planning
+- Vue app, TailwindCSS, Supabase, Vercel setup
+
+## Phase 2: Design System Setup
+- Create eco-friendly design system and base components
+
+## Phase 3: Authentication
+- Supabase OTP login, session management, route protection
+
+## Phase 4: Database Setup
+- Create categories, products, orders tables
+
+## Phase 5: Frontend Pages
+- Home, Categories, Product Details, Cart, Checkout, My Orders
+
+## Phase 6: Cart & Orders
+- Cart logic, dynamic pricing by weight, order submission
+
+## Phase 7: Admin Panel
+- Admin dashboard for orders and products management
+
+## Phase 8: Deployment
+- Final setup on Vercel, SEO, production optimization
+
+## Phase 9: QA, Polish & Launch
+- Testing, performance improvements, soft launch
+
+---
+
+# 🔵 Milestones
+
+| Milestone | Due Date |
+|:--|:--|
+| Project Setup Complete | May 3rd, 2025 |
+| Design System Ready | May 6th, 2025 |
+| Authentication Working | May 9th, 2025 |
+| Database Setup Complete | May 11th, 2025 |
+| Pages Developed | May 20th, 2025 |
+| Cart & Checkout Functional | May 24th, 2025 |
+| Admin Panel Ready | May 27th, 2025 |
+| Deployment | May 29th, 2025 |
+| MVP Launch | May 31st, 2025 |
+
+---
+
+# 🔧 Installation Guide
+
+```bash
+# Clone the repository
+git clone https://github.com/pothuraju-dev/gramaasantha.git
+
+# Navigate into the project folder
+cd gramaasantha
+
+# Install dependencies
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# Start local development server
 npm run dev
 ```
 
-### ENV Variables
+Create a `.env` file with your Supabase credentials:
+```bash
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
 
-Make sure to provide the env variables listed in the `.env.example` file along with their values.
+---
+
+# 🌍 Deployment
+- Automatic deployments to Vercel on `main` branch push.
+
+---
+
+# 📚 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+# 🌿 Made with love for Villages
+
+> GramaaSantha - Freshness of Village Markets, Delivered Eco-Friendly.
+
+---
